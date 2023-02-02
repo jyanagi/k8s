@@ -1,9 +1,8 @@
 # k8s on Ubuntu 22.04 (Jammy Jellyfish)
 
-## <span style="color: red">The Foundation: laying the groundwork</span>
+##The Foundation: laying the groundwork
 Modify the hostname for your respective k8s node:
 ```
-# Only select ONE based on the device.
 sudo hostnamectl set-hostname "u-k8s-cp01"
 exec bash
 ```
