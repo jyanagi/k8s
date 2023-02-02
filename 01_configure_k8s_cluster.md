@@ -1,6 +1,7 @@
 # k8s on Ubuntu 22.04 (Jammy Jellyfish)
 
-##The Foundation: laying the groundwork
+## The Foundation: laying the groundwork
+
 Modify the hostname for your respective k8s node:
 ```
 sudo hostnamectl set-hostname "u-k8s-cp01"
@@ -154,7 +155,7 @@ If successful, you will see a similar confirmation message:
 >
 >Run 'kubectl get nodes' on the control-plane to see this node join the cluster.
 
-To verify that the worker node(s) have joined the k8s cluster, issue the `kubectl get nodes` command and you should now see the worker node(s) joined:
+To verify that the worker node(s) have joined the k8s cluster, issue the `kubectl get nodes` command on the control node and you should now see the worker node(s) joined to the cluster:
 | NAME           |  STATUS   |  ROLES          |  AGE |  VERSION  |
 |:---------------|:----------|:----------------|:-----|:----------|
 | u-k8s-cp01     |  NotReady |  control-plane  |  8m  |  v1.26.1  |
