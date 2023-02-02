@@ -137,7 +137,6 @@ You should see an output of the following (or similar)
 Notice how the status for your Controller Node is `NotReady`. That's because there are no workers joined to the cluster.
 
 ## Join the Worker Nodes to the k8s cluster [ON WORKER NODES ONLY]
-Copy the `kubeadm join` output of the kubernetes initialization process and execute via the command:
-```
-kubeadm join uk8s-cp01.yourdomain.com:6443 --token xo5dno.ptesnjr1hdm1skcc \ --discovery-token-ca-cert-hash sha256:3deb7a0571ddeb5728ca9378795fb7809fb1fe03ddc2d0fc68afc399a26810e7
-```
+Copy the `kubeadm join` output of the kubernetes initialization process and execute via the command (copied from previous step - my output will be different from yours:
+`kubeadm join uk8s-cp01.yourdomain.com:6443 --token xo5dno.ptesnjr1hdm1skcc \ --discovery-token-ca-cert-hash sha256:3deb7a0571ddeb5728ca9378795fb7809fb1fe03ddc2d0fc68afc399a26810e7
+`
