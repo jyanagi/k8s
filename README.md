@@ -131,8 +131,9 @@ kubectl get nodes
 ```
 You should see an output of the following (or similar)
 
->NAME             STATUS     ROLES           AGE   VERSION <br /> 
->napp-uk8s-cp01   NotReady   control-plane   1m   v1.26.1
+| NAME           |  STATUS   |  ROLES         |  AGE |  VERSION  |
+|:---------------|:----------|:---------------|:-----|:----------|
+| napp-uk8s-cp01 |  NotReady |  control-plane |  1m  |  v1.26.1  |
 
 Notice how the status for your Controller Node is `NotReady`. That's because there are no workers joined to the cluster.
 
