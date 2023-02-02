@@ -82,3 +82,62 @@ Install Kubernets:
 sudo apt update
 sudo apt install -y kubelet kubeadm kubectl
 ```
+## Initialize the k8s cluster [ON CONTROL NODE ONLY]
+
+Run the kubeadm command from the **control node** only:
+```
+sudo kubeadm init --control-plane-endpoint=*napp-uk8s-cp01.yourdomain.com*
+```
+If successful, you should receive a message similar to the following:
+
+>Your Kubernetes control-plane has initialized successfully!
+>
+>To start using your cluster, you need to run the following as a regular user:
+>
+>  **mkdir -p $HOME/.kube
+>  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+>  sudo chown $(id -u):$(id -g) $HOME/.kube/config**
+>
+>Alternatively, if you are the root user, you can run:
+>
+>  export KUBECONFIG=/etc/kubernetes/admin.conf
+>
+>You should now deploy a pod network to the cluster.
+>Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+>  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+>
+>You can now join any number of control-plane nodes by copying certificate authorities
+>and service account keys on each node and then running the following as root:
+>
+>  kubeadm join napp-uk8s-cp01.yourdomain.com:6443 --token xo5dno.ptesnjr1hdm1skcc \
+>        --discovery-token-ca-cert-hash sha256:3deb7a0571ddeb5728ca9378795fb7809fb1fe03ddc2d0fc68afc399a26810e7 \
+>        --control-plane 
+>
+>Then you can join any number of worker nodes by running the following on each as root:
+>
+>kubeadm join napp-uk8s-cp01.yourdomain.com:6443 --token xo5dno.ptesnjr1hdm1skcc \
+>        --discovery-token-ca-cert-hash sha256:3deb7a0571ddeb5728ca9378795fb7809fb1fe03ddc2d0fc68afc399a26810e7
+
+Note the `kubeadm join napp-uk8s-cp01.yourdomain.com:6443 --token xo5dno.ptesnjr1hdm1skcc \ --discovery-token-ca-cert-hash sha256:3deb7a0571ddeb5728ca9378795fb7809fb1fe03ddc2d0fc68afc399a26810e7` command from the output above.
+
+This will be applied to every worker node to join them to the k8s cluster. 
+
+But first, we must issue the following commands to interact with the k8s cluster:
+```
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+```
+To view the nodes within the k8s cluster, issue the command:
+```
+kubectl get nodes
+```
+You should see an output of the following (or similar)
+
+>NAME             STATUS     ROLES           AGE   VERSION
+>napp-uk8s-cp01   NotReady   control-plane   1m   v1.26.1
+
+Notice how the status for your Controller Node is `NotReady`. That's because there are no workers joined to the cluster.
+
+## Join the Worker Nodes to the k8s cluster [ON WORKER NODES ONLY]
+Copy the `kubeadm join` output of the kubernetes initialization process 
