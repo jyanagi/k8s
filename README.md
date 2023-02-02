@@ -83,7 +83,7 @@ sudo apt install -y kubelet kubeadm kubectl
 
 Run the kubeadm command from the **control node** only:
 ```
-sudo kubeadm init --control-plane-endpoint=*napp-uk8s-cp01.yourdomain.com*
+sudo kubeadm init --control-plane-endpoint=uk8s-cp01.yourdomain.com
 ```
 If successful, you should receive a message similar to the following:
 
@@ -106,16 +106,16 @@ If successful, you should receive a message similar to the following:
 >You can now join any number of control-plane nodes by copying certificate authorities
 >and service account keys on each node and then running the following as root:
 >
->  kubeadm join napp-uk8s-cp01.yourdomain.com:6443 --token xo5dno.ptesnjr1hdm1skcc \
+>  kubeadm join uk8s-cp01.yourdomain.com:6443 --token xo5dno.ptesnjr1hdm1skcc \
 >        --discovery-token-ca-cert-hash sha256:3deb7a0571ddeb5728ca9378795fb7809fb1fe03ddc2d0fc68afc399a26810e7 \
 >        --control-plane 
 >
 >Then you can join any number of worker nodes by running the following on each as root:
 >
->kubeadm join napp-uk8s-cp01.yourdomain.com:6443 --token xo5dno.ptesnjr1hdm1skcc \
+>kubeadm join uk8s-cp01.yourdomain.com:6443 --token xo5dno.ptesnjr1hdm1skcc \
 >        --discovery-token-ca-cert-hash sha256:3deb7a0571ddeb5728ca9378795fb7809fb1fe03ddc2d0fc68afc399a26810e7
 
-Note the `kubeadm join napp-uk8s-cp01.yourdomain.com:6443 --token xo5dno.ptesnjr1hdm1skcc \ --discovery-token-ca-cert-hash sha256:3deb7a0571ddeb5728ca9378795fb7809fb1fe03ddc2d0fc68afc399a26810e7` command from the output above.
+Note the `kubeadm joinuk8s-cp01.yourdomain.com:6443 --token xo5dno.ptesnjr1hdm1skcc \ --discovery-token-ca-cert-hash sha256:3deb7a0571ddeb5728ca9378795fb7809fb1fe03ddc2d0fc68afc399a26810e7` command from the output above.
 
 This will be applied to every worker node to join them to the k8s cluster. 
 
@@ -137,4 +137,7 @@ You should see an output of the following (or similar)
 Notice how the status for your Controller Node is `NotReady`. That's because there are no workers joined to the cluster.
 
 ## Join the Worker Nodes to the k8s cluster [ON WORKER NODES ONLY]
-Copy the `kubeadm join` output of the kubernetes initialization process 
+Copy the `kubeadm join` output of the kubernetes initialization process and execute via the command:
+```
+kubeadm join uk8s-cp01.yourdomain.com:6443 --token xo5dno.ptesnjr1hdm1skcc \ --discovery-token-ca-cert-hash sha256:3deb7a0571ddeb5728ca9378795fb7809fb1fe03ddc2d0fc68afc399a26810e7
+```
