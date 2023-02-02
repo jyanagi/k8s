@@ -39,7 +39,7 @@ net.ipv4.ip_forward = 1
 net.bridge.bridge-nf-call-iptables = 1
 EOF 
 ```
-Restart `sysctl` for these changes to take effect:
+Restart `sysctl` for these changes to take effect (ignore any errors you see on `sysctl: setting key "net.ipv4.conf.all.: Invalid Argument`:
 ```
 sudo sysctl --system
 ```
@@ -131,7 +131,7 @@ kubectl get nodes
 ```
 You should see an output of the following (or similar)
 
->NAME             STATUS     ROLES           AGE   VERSION
+>NAME             STATUS     ROLES           AGE   VERSION <br /> 
 >napp-uk8s-cp01   NotReady   control-plane   1m   v1.26.1
 
 Notice how the status for your Controller Node is `NotReady`. That's because there are no workers joined to the cluster.
