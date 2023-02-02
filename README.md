@@ -82,8 +82,3 @@ Install Kubernets:
 sudo apt update
 sudo apt install -y kubelet kubeadm kubectl
 ```
-## On the Control Plane Node [only!!!]
-Initialize the k8s cluster by running the command:
-```
-sudo kubeadm init --control-plane-endpoint=u-k8s-cp01.yourdomain.com
-```
