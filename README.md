@@ -3,10 +3,8 @@
 ## <span style="color: red">The Foundation: laying the groundwork</span>
 Modify the hostname for your respective k8s node:
 ```
-sudo hostnamectl set-hostname "u-k8s-cp01" // Controller Node
-sudo hostnamectl set-hostname "u-k8s-w01a" // Worker Node 01a
-sudo hostnamectl set-hostname "u-k8s-w01b" // Worker Node 01b
-sudo hostnamectl set-hostname "u-k8s-w01c" // Worker Node 01c
+# Only select ONE based on the device.
+sudo hostnamectl set-hostname "u-k8s-cp01"
 exec bash
 ```
 
