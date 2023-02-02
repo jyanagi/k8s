@@ -15,7 +15,7 @@ Create manual host records within `/etc/hosts` on each server:
 aaa.bbb.ccc.ddd u-k8s-cp01.yourdomain.com u-k8s-cp01
 aaa.bbb.ccc.xxx u-k8s-w01a.yourdomain.com u-k8s-w01a
 aaa.bbb.ccc.yyy u-k8s-w01b.yourdomain.com u-k8s-w01b
-aaa.bbb.ccc.zzz u-k8s-w01b.yourdomain.com u-k8s-w01c
+aaa.bbb.ccc.zzz u-k8s-w01c.yourdomain.com u-k8s-w01c
 ```
 
 The Kubernetes scheduler (kube-scheduler) is responsible for the placement of pods on k8s nodes based on resource availability. Because `kube-schedule` does not use the swap configurations, it is recommended to disable the swap space.
