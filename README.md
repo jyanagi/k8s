@@ -83,7 +83,7 @@ sudo apt install -y kubelet kubeadm kubectl
 
 Run the kubeadm command from the **control node** only:
 ```
-sudo kubeadm init --control-plane-endpoint=uk8s-cp01.yourdomain.com
+sudo kubeadm init --control-plane-endpoint=u-k8s-cp01.yourdomain.com
 ```
 If successful, you should receive a message similar to the following:
 
@@ -91,9 +91,9 @@ If successful, you should receive a message similar to the following:
 >
 >To start using your cluster, you need to run the following as a regular user:
 >
->  **mkdir -p $HOME/.kube
+>  mkdir -p $HOME/.kube
 >  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
->  sudo chown $(id -u):$(id -g) $HOME/.kube/config**
+>  sudo chown $ (id -u) : $ (id -g) $HOME/.kube/config
 >
 >Alternatively, if you are the root user, you can run:
 >
@@ -106,16 +106,16 @@ If successful, you should receive a message similar to the following:
 >You can now join any number of control-plane nodes by copying certificate authorities
 >and service account keys on each node and then running the following as root:
 >
->  kubeadm join uk8s-cp01.yourdomain.com:6443 --token xo5dno.ptesnjr1hdm1skcc \
+>  kubeadm join u-k8s-cp01.yourdomain.com:6443 --token xo5dno.ptesnjr1hdm1skcc \
 >        --discovery-token-ca-cert-hash sha256:3deb7a0571ddeb5728ca9378795fb7809fb1fe03ddc2d0fc68afc399a26810e7 \
 >        --control-plane 
 >
 >Then you can join any number of worker nodes by running the following on each as root:
 >
->kubeadm join uk8s-cp01.yourdomain.com:6443 --token xo5dno.ptesnjr1hdm1skcc \
+>kubeadm join u-k8s-cp01.yourdomain.com:6443 --token xo5dno.ptesnjr1hdm1skcc \
 >        --discovery-token-ca-cert-hash sha256:3deb7a0571ddeb5728ca9378795fb7809fb1fe03ddc2d0fc68afc399a26810e7
 
-Note the `kubeadm joinuk8s-cp01.yourdomain.com:6443 --token xo5dno.ptesnjr1hdm1skcc \ --discovery-token-ca-cert-hash sha256:3deb7a0571ddeb5728ca9378795fb7809fb1fe03ddc2d0fc68afc399a26810e7` command from the output above.
+Note the `kubeadm join u-k8s-cp01.yourdomain.com:6443 --token xo5dno.ptesnjr1hdm1skcc \ --discovery-token-ca-cert-hash sha256:3deb7a0571ddeb5728ca9378795fb7809fb1fe03ddc2d0fc68afc399a26810e7` command from the output above.
 
 This will be applied to every worker node to join them to the k8s cluster. 
 
@@ -131,13 +131,35 @@ kubectl get nodes
 ```
 You should see an output of the following (or similar)
 
-| NAME           |  STATUS   |  ROLES         |  AGE |  VERSION  |
-|:---------------|:----------|:---------------|:-----|:----------|
-| napp-uk8s-cp01 |  NotReady |  control-plane |  1m  |  v1.26.1  |
+| NAME           |  STATUS   |  ROLES          |  AGE |  VERSION  |
+|:---------------|:----------|:----------------|:-----|:----------|
+| u-k8s-cp01     |  NotReady |  control-plane  |  1m  |  v1.26.1  |
 
 Notice how the status for your Controller Node is `NotReady`. That's because there are no workers joined to the cluster.
 
 # Join the Worker Nodes to the k8s cluster [ON WORKER NODES ONLY]
 Copy the `kubeadm join` output of the kubernetes initialization process and execute via the command (copied from previous step - my output will be different from yours):
-`kubeadm join uk8s-cp01.yourdomain.com:6443 --token xo5dno.ptesnjr1hdm1skcc \ --discovery-token-ca-cert-hash sha256:3deb7a0571ddeb5728ca9378795fb7809fb1fe03ddc2d0fc68afc399a26810e7
-`
+```
+sudo kubeadm join u-k8s-cp01.yourdomain.com:6443 --token xo5dno.ptesnjr1hdm1skcc \ --discovery-token-ca-cert-hash sha256:3deb7a0571ddeb5728ca9378795fb7809fb1fe03ddc2d0fc68afc399a26810e7
+```
+
+  If your shell becomes disconnected (i.e., idle timeout) and you need the `kubeadm join` token, perform the following command on the control node:
+```
+  kubeadm token create --print-join-command
+```
+If successful, you will see a similar confirmation message:
+>This node has joined the cluster:
+>* Certificate signing request was sent to apiserver and a response was received.
+>* The Kubelet was informed of the new secure connection details.
+>
+>Run 'kubectl get nodes' on the control-plane to see this node join the cluster.
+
+To verify that the worker node(s) have joined the k8s cluster, issue the `kubectl get nodes` command and you should now see the worker node(s) joined:
+| NAME           |  STATUS   |  ROLES          |  AGE |  VERSION  |
+|:---------------|:----------|:----------------|:-----|:----------|
+| u-k8s-cp01     |  NotReady |  control-plane  |  8m  |  v1.26.1  |
+| u-k8s-w01a     |  NotReady |  \<none\>       |  5m  |  v1.26.1  |
+| u-k8s-w01b     |  NotReady |  \<none\>       |  3m  |  v1.26.1  |
+| u-k8s-w01c     |  NotReady |  \<none\>       |  1m  |  v1.26.1  |
+
+## Congratulations, you are now ready to configure and deploy pods within your upstream k8s cluster
