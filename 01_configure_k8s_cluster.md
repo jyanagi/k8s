@@ -15,6 +15,11 @@ aaa.bbb.ccc.xxx u-k8s-w01a.yourdomain.com u-k8s-w01a
 aaa.bbb.ccc.yyy u-k8s-w01b.yourdomain.com u-k8s-w01b
 aaa.bbb.ccc.zzz u-k8s-w01c.yourdomain.com u-k8s-w01c
 ```
+With Ubuntu 22.04, the `needrestart` configuration is enabled by default to *interactively* prompt the users to restart necessary services during the `aptitude` install or upgrade process.  To avoid interrupting our commands and force the restart of services automatically, issue the following command which will modify the `/etc/needrestart/needrestart.conf` file (**Optional**) 
+
+```
+sudo sed -i "/#\$nrconf{restart} = 'i';/s/.*/\$nrconf{restart} = 'a';/" /etc/needrestart/needrestart.conf
+```
 
 The Kubernetes scheduler (kube-scheduler) is responsible for the placement of pods on k8s nodes based on resource availability. Because `kube-schedule` does not use the swap configurations, it is recommended to disable the swap space.
 
