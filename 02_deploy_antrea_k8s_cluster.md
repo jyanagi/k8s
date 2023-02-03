@@ -118,48 +118,7 @@ Navigate to the same directory as the `antrea-advanced-v1.7.1+vmware.1.yml` file
 ```
 kubectl apply -f antrea-advanced-v1.7.1+
 ```
->serviceaccount/antrea-agent created
->serviceaccount/antctl created
->serviceaccount/antrea-controller created
->secret/antrea-agent-service-account-token created
->secret/antctl-service-account-token created
->configmap/antrea-agent-tweaker created
->configmap/antrea-config created
->customresourcedefinition.apiextensions.k8s.io/antreaagentinfos.crd.antrea.io created
->customresourcedefinition.apiextensions.k8s.io/antreacontrollerinfos.crd.antrea.io created
->customresourcedefinition.apiextensions.k8s.io/clustergroups.crd.antrea.io created
->customresourcedefinition.apiextensions.k8s.io/clusternetworkpolicies.crd.antrea.io created
->customresourcedefinition.apiextensions.k8s.io/egresses.crd.antrea.io created
->customresourcedefinition.apiextensions.k8s.io/externalentities.crd.antrea.io created
->customresourcedefinition.apiextensions.k8s.io/externalippools.crd.antrea.io created
->customresourcedefinition.apiextensions.k8s.io/ippools.crd.antrea.io created
->customresourcedefinition.apiextensions.k8s.io/networkpolicies.crd.antrea.io created
->customresourcedefinition.apiextensions.k8s.io/tiers.crd.antrea.io created
->customresourcedefinition.apiextensions.k8s.io/tierentitlements.crd.antrea.tanzu.vmware.com created
->customresourcedefinition.apiextensions.k8s.io/tierentitlementbindings.crd.antrea.tanzu.vmware.com created
->customresourcedefinition.apiextensions.k8s.io/traceflows.crd.antrea.io created
->customresourcedefinition.apiextensions.k8s.io/trafficcontrols.crd.antrea.io created
->clusterrole.rbac.authorization.k8s.io/antrea-agent created
->clusterrole.rbac.authorization.k8s.io/antctl created
->clusterrole.rbac.authorization.k8s.io/antrea-cluster-identity-reader created
->clusterrole.rbac.authorization.k8s.io/antrea-controller created
->clusterrole.rbac.authorization.k8s.io/aggregate-antrea-policies-edit created
->clusterrole.rbac.authorization.k8s.io/aggregate-antrea-policies-view created
->clusterrole.rbac.authorization.k8s.io/aggregate-traceflows-edit created
->clusterrole.rbac.authorization.k8s.io/aggregate-traceflows-view created
->clusterrole.rbac.authorization.k8s.io/aggregate-antrea-clustergroups-edit created
->clusterrole.rbac.authorization.k8s.io/aggregate-antrea-clustergroups-view created
->clusterrolebinding.rbac.authorization.k8s.io/antrea-agent created
->clusterrolebinding.rbac.authorization.k8s.io/antctl created
->clusterrolebinding.rbac.authorization.k8s.io/antrea-controller created
->service/antrea created
->daemonset.apps/antrea-agent created
->deployment.apps/antrea-controller created
->apiservice.apiregistration.k8s.io/v1beta2.controlplane.antrea.io created
->apiservice.apiregistration.k8s.io/v1beta1.system.antrea.io created
->apiservice.apiregistration.k8s.io/v1alpha1.stats.antrea.io created
->mutatingwebhookconfiguration.admissionregistration.k8s.io/crdmutator.antrea.io created
->validatingwebhookconfiguration.admissionregistration.k8s.io/crdvalidator.antrea.io created
+
 
 
 
