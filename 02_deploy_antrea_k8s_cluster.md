@@ -23,7 +23,7 @@ You will have several options within the `Product Downloads` tab based on your L
 
 Because we have deployed the cluster on Ubuntu 22.04 (Jammy Jellyfish), we will download and use the `VMware Container Networking with Antrea (Advanced) ? Debian Image and Deployment` option (*UBI is for RedHat/CentOS*).  
 
-VMware Container Networking with Antrea is the commercial version of VMware's Antrea open source offering on Github. Antrea is a Kubernetes networking solution intended to be Kubernetes native. It operates at Layer3/4 to provide networking and security services for a Kubernetes cluster.
+VMware Container Networking with Antrea is the commercial version of VMware's Antrea open source offering . Antrea is a Kubernetes networking solution intended to be Kubernetes native. It operates at Layer3/4 to provide networking and security services for a Kubernetes cluster.
 
 The downloaded file name is similar to: `antrea-advanced-X.Y.Z+vmware.x.zip`. 
 
@@ -39,11 +39,27 @@ The downloaded file name is similar to: `antrea-interworking-0.x.0.zip`
 
 Extract the contents of the .zip files by using the `unzip [filename.zip]` command.  
 
-## 3. Modify the Manifests to use VMware's Image Registry
+If you do not have unzip, you can install it using the following command:
+```
+sudo apt install -y unzip
+```
+
+## 3. Modify the NSX Antrea Manifests to use VMware's Image Registry
 
 In this example, I am not using an internal registry for image distribution, so I will not be covering pushing images to a registry, such as Harbor. For information on how to do this, follow this [link](https://goharbor.io/docs/1.10/working-with-projects/working-with-images/pulling-pushing-images/).
 
-We will need to modify 
+The URL for the Container Images on VMware's distribution Harbor can be found on the [*VMware Container Networking with Antrea Release Notes*](https://docs.vmware.com/en/VMware-Container-Networking-with-Antrea/1.5.0/rn/vmware-container-networking-with-antrea-150-release-notes/index.html)
+
+We will be using the following URLs:
+Antrea images:
+> projects.registry.vmware.com/antreainterworking/antrea-advanced-debian:v1.7.1_vmware.1
+
+Antrea-NSX images:
+> projects.registry.vmware.com/antreainterworking/interworking-ubuntu:0.7.0
+
+### 3.1 Antrea Deployment Manifest
+
+
 
 
 
