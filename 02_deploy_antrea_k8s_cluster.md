@@ -1,3 +1,4 @@
+# NOTE: To be performed on the CONTROL NODE only
 # Overview
 
 Antrea Container Network Interface (CNI) [antrea.io] is a k8s-native project that provides programmable networking and security policies for pod workloads. Antrea enables k8s pod networking with IP overlay, software-defined networks via GENEVE or VXLAN encapsulation and is built on the Open vSwitch (OVS). 
@@ -25,7 +26,7 @@ Because we have deployed the cluster on Ubuntu 22.04 (Jammy Jellyfish), we will 
 
 VMware Container Networking with Antrea is the commercial version of VMware's Antrea open source offering . Antrea is a Kubernetes networking solution intended to be Kubernetes native. It operates at Layer3/4 to provide networking and security services for a Kubernetes cluster.
 
-The downloaded file name is similar to: `antrea-advanced-X.Y.Z+vmware.x.zip`. 
+The downloaded file name is similar to: `antrea-advanced-1.7.1+vmware.x.zip`. Note that this version will change as this documentation ages.
 
 ### 1.2 Download the Antrea Interworking Adapter Files
 
@@ -33,7 +34,7 @@ Locate and download the `Antrea-NSX Interworking Adapter Image and Manifest Bund
 
 The VMware Container Networking with Antrea, NSX Interworking connector is linking your Antrea enabled K8s cluster with NSX Manager. It is used to collect K8s inventory, statistics and logs and reports those to NSX Manager. It also translates NSX Firewall policies into Antrea Cluster Network Policies, and applies those to the K8s cluster.
 
-The downloaded file name is similar to: `antrea-interworking-0.x.0.zip`
+The downloaded file name is similar to: `antrea-interworking-0.7.0.zip`. Note that this version will change as this documentation ages.
 
 ## 2. Extract contents of the archive file
 
@@ -43,7 +44,6 @@ If you do not have unzip, you can install it using the following command:
 ```
 sudo apt install -y unzip
 ```
-
 ## 3. Modify the NSX Antrea Manifests to use VMware's Image Registry
 
 In this example, I am not using an internal registry for image distribution, so I will not be covering pushing images to a registry, such as Harbor. For information on how to do this, follow this [link](https://goharbor.io/docs/1.10/working-with-projects/working-with-images/pulling-pushing-images/).
@@ -58,10 +58,108 @@ Antrea images:
 Antrea-NSX images:
 > projects.registry.vmware.com/antreainterworking/interworking-ubuntu:0.7.0
 
-### 3.1 Antrea Deployment Manifest
+### 3.1 Modify Antrea Deployment Manifest
 
+Navigate to the directory `~/antrea-advanced-1.7.1+vmware.1/manifests` (Your location/absolute path may be different)
 
+```
+cd ~/antrea-advanced-1.7.1+vmware.1/manifests
+```
+We need to replace the container image library where the `antrea-advanced-v1.7.1+vmware.1.yml` manifest is indexing its container images from; i.e., `image: "antrea/antrea-advanced-debian:v1.7.1_vmware.1"`.
 
+Instead, we want to point it to VMware's distribution Harbor registry. Use the following command to replace all image indexes within this document:
+
+```
+sed -i 's/image: \"antrea\//image: \"projects.registry.vmware.com\/antreainterworking\//g' antrea-advanced-v1.7.1+vmware.1.yml
+```
+Confirm by issuing the command
+```
+grep "images: " antrea-advanced-v1.7.1+vmware.1.yml
+```
+
+You should see similar output:
+
+>image:  \"projects.registry.vmware.com/antreainterworking/antrea-advanced-debian:v1.7.1_vmware.1\"<br />
+>image:  \"projects.registry.vmware.com/antreainterworking/antrea-advanced-debian:v1.7.1_vmware.1\"<br />
+>image:  \"projects.registry.vmware.com/antreainterworking/antrea-advanced-debian:v1.7.1_vmware.1\"<br />
+>image:  \"projects.registry.vmware.com/antreainterworking/antrea-advanced-debian:v1.7.1_vmware.1\"<br />
+>image:  \"projects.registry.vmware.com/antreainterworking/antrea-advanced-debian:v1.7.1_vmware.1\"<br />
+
+### 3.2 Modify Antrea Interworking Manifest
+
+Navigate to the directory `~/antrea-interworking-0.7.0` (Your location/absolute path may be different)
+```
+cd ~/antrea-interworking-0.7.0
+```
+
+We need to replace the container image library for both `interworking.yaml` and `deregisterjob.yaml` files are indexing their images from; i.e., `image: vmware.io/antrea/interworking:0.7.0`.
+
+Like the previous step, we want to point to VMware's distribution Harbor registry. Use the following command to replace all image indexes within these documents:
+
+```
+sed -i 's/image: vmware.io\/antrea\/interworking:0.7.0/image: projects.registry.vmware.com\/antreainterworking\/interworking-ubuntu:0.7.0/g' interworking.yaml 
+sed -i 's/image: vmware.io\/antrea\/interworking:0.7.0/image: projects.registry.vmware.com\/antreainterworking\/interworking-ubuntu:0.7.0/g' deregisterjob.yaml
+```
+Confirm by issuing the command:
+```
+grep "images: " interworking.yaml deregisterjob.yaml
+```
+You should see similar output:
+>deregisterjob.yaml:          image: projects.registry.vmware.com/antreainterworking/interworking-ubuntu:0.7.0
+>interworking.yaml:          image: projects.registry.vmware.com/antreainterworking/interworking-ubuntu:0.7.0
+>interworking.yaml:          image: projects.registry.vmware.com/antreainterworking/interworking-ubuntu:0.7.0
+>interworking.yaml:          image: projects.registry.vmware.com/antreainterworking/interworking-ubuntu:0.7.0
+>interworking.yaml:          image: projects.registry.vmware.com/antreainterworking/interworking-ubuntu:0.7.0
+>interworking.yaml:          image: projects.registry.vmware.com/antreainterworking/interworking-ubuntu:0.7.0
+
+## 4. Deploy Antrea onto the Kubernetes Cluster
+
+Navigate to the same directory as the `antrea-advanced-v1.7.1+vmware.1.yml` file and run the following `kubectl` command:
+```
+kubectl apply -f antrea-advanced-v1.7.1+
+```
+>serviceaccount/antrea-agent created
+>serviceaccount/antctl created
+>serviceaccount/antrea-controller created
+>secret/antrea-agent-service-account-token created
+>secret/antctl-service-account-token created
+>configmap/antrea-agent-tweaker created
+>configmap/antrea-config created
+>customresourcedefinition.apiextensions.k8s.io/antreaagentinfos.crd.antrea.io created
+>customresourcedefinition.apiextensions.k8s.io/antreacontrollerinfos.crd.antrea.io created
+>customresourcedefinition.apiextensions.k8s.io/clustergroups.crd.antrea.io created
+>customresourcedefinition.apiextensions.k8s.io/clusternetworkpolicies.crd.antrea.io created
+>customresourcedefinition.apiextensions.k8s.io/egresses.crd.antrea.io created
+>customresourcedefinition.apiextensions.k8s.io/externalentities.crd.antrea.io created
+>customresourcedefinition.apiextensions.k8s.io/externalippools.crd.antrea.io created
+>customresourcedefinition.apiextensions.k8s.io/ippools.crd.antrea.io created
+>customresourcedefinition.apiextensions.k8s.io/networkpolicies.crd.antrea.io created
+>customresourcedefinition.apiextensions.k8s.io/tiers.crd.antrea.io created
+>customresourcedefinition.apiextensions.k8s.io/tierentitlements.crd.antrea.tanzu.vmware.com created
+>customresourcedefinition.apiextensions.k8s.io/tierentitlementbindings.crd.antrea.tanzu.vmware.com created
+>customresourcedefinition.apiextensions.k8s.io/traceflows.crd.antrea.io created
+>customresourcedefinition.apiextensions.k8s.io/trafficcontrols.crd.antrea.io created
+>clusterrole.rbac.authorization.k8s.io/antrea-agent created
+>clusterrole.rbac.authorization.k8s.io/antctl created
+>clusterrole.rbac.authorization.k8s.io/antrea-cluster-identity-reader created
+>clusterrole.rbac.authorization.k8s.io/antrea-controller created
+>clusterrole.rbac.authorization.k8s.io/aggregate-antrea-policies-edit created
+>clusterrole.rbac.authorization.k8s.io/aggregate-antrea-policies-view created
+>clusterrole.rbac.authorization.k8s.io/aggregate-traceflows-edit created
+>clusterrole.rbac.authorization.k8s.io/aggregate-traceflows-view created
+>clusterrole.rbac.authorization.k8s.io/aggregate-antrea-clustergroups-edit created
+>clusterrole.rbac.authorization.k8s.io/aggregate-antrea-clustergroups-view created
+>clusterrolebinding.rbac.authorization.k8s.io/antrea-agent created
+>clusterrolebinding.rbac.authorization.k8s.io/antctl created
+>clusterrolebinding.rbac.authorization.k8s.io/antrea-controller created
+>service/antrea created
+>daemonset.apps/antrea-agent created
+>deployment.apps/antrea-controller created
+>apiservice.apiregistration.k8s.io/v1beta2.controlplane.antrea.io created
+>apiservice.apiregistration.k8s.io/v1beta1.system.antrea.io created
+>apiservice.apiregistration.k8s.io/v1alpha1.stats.antrea.io created
+>mutatingwebhookconfiguration.admissionregistration.k8s.io/crdmutator.antrea.io created
+>validatingwebhookconfiguration.admissionregistration.k8s.io/crdvalidator.antrea.io created
 
 
 
