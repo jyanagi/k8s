@@ -51,6 +51,7 @@ In this example, I am not using an internal registry for image distribution, so 
 The URL for the Container Images on VMware's distribution Harbor can be found on the [*VMware Container Networking with Antrea Release Notes*](https://docs.vmware.com/en/VMware-Container-Networking-with-Antrea/1.5.0/rn/vmware-container-networking-with-antrea-150-release-notes/index.html)
 
 We will be using the following URLs:
+
 Antrea images:
 > projects.registry.vmware.com/antreainterworking/antrea-advanced-debian:v1.7.1_vmware.1
 
