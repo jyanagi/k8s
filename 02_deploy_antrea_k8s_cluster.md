@@ -112,12 +112,21 @@ You should see similar output:
 >interworking.yaml:          image: projects.registry.vmware.com/antreainterworking/interworking-ubuntu:0.7.0
 >interworking.yaml:          image: projects.registry.vmware.com/antreainterworking/interworking-ubuntu:0.7.0
 
-## 4. Deploy Antrea onto the Kubernetes Cluster
+## 4. Deploy Antrea as the CNI for the Kubernetes Cluster
 
 Navigate to the same directory as the `antrea-advanced-v1.7.1+vmware.1.yml` file and run the following `kubectl` command:
 ```
 kubectl apply -f antrea-advanced-v1.7.1+
 ```
+To verify that Antrea was successfully deployed to the k8s cluster, use the command `kubectl get pods -n kube-system | grep antrea`.  You can even append `-w` to *watch* the status change.  There should be an instance of the Antrea controller along with an instance of Antrea agents (one for each node) with a status of "Running".  See below for example output: 
+
+| NAME                                   | READY  | STATUS   | RESTARTS  | AGE  |
+|:---------------------------------------|:-------|:---------|:----------|:-----|
+| antrea-agent-68rgw                     | 2/2    | Running  | 0         | 33s  |
+| antrea-agent-8wcgs                     | 2/2    | Running  | 0         | 33s  |
+| antrea-controller-6bf74dd6f8-c9twh     | 1/1    | Running  | 0         | 33s  |
+
+Congratulations!  You have now configured VMware's Antrea CNI with the K8s cluster; next, we need to integrate our Antrea CNI with NSX.
 
 
 
