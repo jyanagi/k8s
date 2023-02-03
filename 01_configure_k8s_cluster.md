@@ -89,7 +89,7 @@ sudo apt install -y kubelet kubeadm kubectl
 
 Run the kubeadm command from the **control node** only:
 ```
-sudo kubeadm init --control-plane-endpoint=u-k8s-cp01.yourdomain.com
+sudo kubeadm init --control-plane-endpoint=u-k8s-cp01.yourdomain.com --pod-network-cidr 10.250.0.0/16
 ```
 If successful, you should receive a message similar to the following:
 
