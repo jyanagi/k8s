@@ -91,7 +91,6 @@ Navigate to the directory `~/antrea-interworking-0.7.0` (Your location/absolute 
 ```
 cd ~/antrea-interworking-0.7.0
 ```
-
 We need to replace the container image library for both `interworking.yaml` and `deregisterjob.yaml` files are indexing their images from; i.e., `image: vmware.io/antrea/interworking:0.7.0`.
 
 Like the previous step, we want to point to VMware's distribution Harbor registry. Use the following command to replace all image indexes within these documents:
@@ -105,11 +104,11 @@ Confirm by issuing the command:
 grep "images: " interworking.yaml deregisterjob.yaml
 ```
 You should see similar output:
->deregisterjob.yaml:          image: projects.registry.vmware.com/antreainterworking/interworking-ubuntu:0.7.0
->interworking.yaml:          image: projects.registry.vmware.com/antreainterworking/interworking-ubuntu:0.7.0
->interworking.yaml:          image: projects.registry.vmware.com/antreainterworking/interworking-ubuntu:0.7.0
->interworking.yaml:          image: projects.registry.vmware.com/antreainterworking/interworking-ubuntu:0.7.0
->interworking.yaml:          image: projects.registry.vmware.com/antreainterworking/interworking-ubuntu:0.7.0
+>deregisterjob.yaml:          image: projects.registry.vmware.com/antreainterworking/interworking-ubuntu:0.7.0 <br />
+>interworking.yaml:          image: projects.registry.vmware.com/antreainterworking/interworking-ubuntu:0.7.0 <br />
+>interworking.yaml:          image: projects.registry.vmware.com/antreainterworking/interworking-ubuntu:0.7.0 <br />
+>interworking.yaml:          image: projects.registry.vmware.com/antreainterworking/interworking-ubuntu:0.7.0 <br />
+>interworking.yaml:          image: projects.registry.vmware.com/antreainterworking/interworking-ubuntu:0.7.0 <br />
 >interworking.yaml:          image: projects.registry.vmware.com/antreainterworking/interworking-ubuntu:0.7.0
 
 ## 4. Deploy Antrea as the CNI for the Kubernetes Cluster
@@ -126,7 +125,95 @@ To verify that Antrea was successfully deployed to the k8s cluster, use the comm
 | antrea-agent-8wcgs                     | 2/2    | Running  | 0         | 33s  |
 | antrea-controller-6bf74dd6f8-c9twh     | 1/1    | Running  | 0         | 33s  |
 
-Congratulations!  You have now configured VMware's Antrea CNI with the K8s cluster; next, we need to integrate our Antrea CNI with NSX.
+You have now configured VMware's Antrea CNI with the K8s cluster; next, we need to integrate our Antrea CNI with NSX.
+
+## 5 Integrate VMware Antrea CNI with NSX
+
+To connect and integrate NSX with our upstream k8s cluster, we need to create a certificate that is associated with an NSX principle identity account. In production deployments, these certificates are issued by a trusted Root CA (i.e., DigiCert, Entrust, IdenTrust); however, in this example, we will be using self-signed certificates for simplicity and demonstration purposes.
+
+### 5.1 Create Self-Signed Certificate
+
+Issue the following commands to generate a private key `(.key)` and an x.509 certificate `(.crt)`:
+```
+#Create and change the working directory to 'certs' 
+mkdir certs && cd certs
+
+#Generate the RSA Private Key (2048 is default modulus size)
+openssl genrsa -out u-k8s-cluster.key
+
+#Generate the Certificiate Signing Request (CSR)
+openssl req -new -key u-k8s-cluster.key -out u-k8s-cluster.csr -subj "/C=US/ST=VA/L=Richmond/O=ProjectONEStone/OU=NSX/CN=Ubuntu Antrea K8s Cluster"
+
+#Issue the self-signed certificate using the CSR and signing with the private key
+openssl x509 -req -days 365 -sha256 -in u-k8s-cluster.csr -signkey u-k8s-cluster.key -out u-k8s-cluster.crt
+```
+You will now have three files in the `./certs` directory:  `u-k8s-cluster.key`, `u-k8s-cluster.csr`, and `u-k8s-cluster.crt`
+
+## 5.2 Modify the Antrea Interworking Bootstrap Configuration
+
+Now that we have our self-signed certificate, we must modify the bootstrap configuration file for Antrea.
+
+Navigate to the `~/antrea-interworking-0.7.0` directory (replace with your absolute path) and you should see the `bootstrap-config.yaml`
+
+Do not forget to replace the IP address of the `nsxManager` variable with your own NSX manager IP address.
+
+```
+clusterName="u-k8s-cluster"
+nsxManager="10.15.11.20" # Replace with your NSX Cluster IP address
+
+sed -i "s|dummyClusterName|${clusterName}|g" bootstrap-config.yaml
+sed -i "s|dummyNSXIP1, dummyNSXIP2, dummyNSXIP3|${nsxManager}|g" bootstrap-config.yaml
+sed -i "35 s|$| $(cat ~/certs/u-k8s-cluster.crt | base64 -w 0)|g" bootstrap-config.yaml
+sed -i "37 s|$| $(cat ~/certs/u-k8s-cluster.key | base64 -w 0)|g" bootstrap-config.yaml
+```
+What these commands did was modify the `bootstrap-config.yaml` file and add the Ubuntu k8s cluster certificate and private key information so that we can integrate our kubernetes cluster with NSX.
+
+## 5.3 Apply the Bootstrap and Interworking configurations
+
+Ensure you are in the `~/antrea-interworking-0.7.0` directory
+```
+cd ~/antrea-interworking-0.7.0
+kubectl apply -f bootstrap-config.yaml -f interworking.yaml
+```
+If successful, it will create the `vmware-system-antrea` namespace within the cluster, create the NSX secrets, configure the cluster role bindings, and map the configurations for NSX integration with the Antrea CNI.
+
+You can verify by issuing the command:
+```
+kubectl get pods -n vmware-system-antrea
+```
+You should see similar output...
+
+| NAME                          | READY | STATUS  | RESTARTS | AGE |
+| :-----------------------------|:------|:--------|:---------|-----|
+| interworking-6c8c5b78b4-td9l8 | 4/4   | Running | 0        | 7m  |
+
+
+
+## 5.4 Create Principal Identity User Account in NSX
+
+Copy the contents of the `u-k8s-cluster.crt` file; we will need to paste this into our Principal Identity User configuration within NSX.
+
+Open a web browser to to your NSX Manager and navigate to `System Tab > Settings: User Management > User Role Assignment` and click `ADD PRINCIPAL IDENTITY`.
+
+Configure the following
+| User/User Group Name: | `u-k8s-cluster`           |
+|:----------------------|:-------------------       |
+| Roles:                | `Enterprise Admin`        |
+| Node Id:              | `u-k8s-cluster`           |
+| Certificate PEM       | Paste Certificate Content |
+
+<p align=center>
+  <img src=https://bit.ly/nsx-principal-identity>
+</p>
+
+You should now be able to go into NSX's inventory and see your kubernetes cluster objects (pods and services)!
+
+As you deploy new namespaces and pods, these will now appear in the inventory and you will be able to apply security policies to the container workloads.
+
+
+
+
+
 
 
 
