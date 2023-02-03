@@ -149,7 +149,7 @@ openssl x509 -req -days 365 -sha256 -in u-k8s-cluster.csr -signkey u-k8s-cluster
 ```
 You will now have three files in the `./certs` directory:  `u-k8s-cluster.key`, `u-k8s-cluster.csr`, and `u-k8s-cluster.crt`
 
-## 5.2 Modify the Antrea Interworking Bootstrap Configuration
+### 5.2 Modify the Antrea Interworking Bootstrap Configuration
 
 Now that we have our self-signed certificate, we must modify the bootstrap configuration file for Antrea.
 
@@ -168,7 +168,7 @@ sed -i "37 s|$| $(cat ~/certs/u-k8s-cluster.key | base64 -w 0)|g" bootstrap-conf
 ```
 What these commands did was modify the `bootstrap-config.yaml` file and add the Ubuntu k8s cluster certificate and private key information so that we can integrate our kubernetes cluster with NSX.
 
-## 5.3 Apply the Bootstrap and Interworking configurations
+### 5.3 Apply the Bootstrap and Interworking configurations
 
 Ensure you are in the `~/antrea-interworking-0.7.0` directory
 ```
