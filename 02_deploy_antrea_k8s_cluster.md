@@ -187,9 +187,7 @@ You should see similar output...
 | :-----------------------------|:------|:--------|:---------|-----|
 | interworking-6c8c5b78b4-td9l8 | 4/4   | Running | 0        | 7m  |
 
-
-
-## 5.4 Create Principal Identity User Account in NSX
+### 5.4 Create Principal Identity User Account in NSX
 
 Copy the contents of the `u-k8s-cluster.crt` file; we will need to paste this into our Principal Identity User configuration within NSX.
 
