@@ -1,5 +1,5 @@
-# NOTE: To be performed on the CONTROL NODE only
-# Overview
+# To be performed on the CONTROL NODE only
+## Overview
 
 Antrea Container Network Interface (CNI) [antrea.io] is a k8s-native project that provides programmable networking and security policies for pod workloads. Antrea enables k8s pod networking with IP overlay, software-defined networks via GENEVE or VXLAN encapsulation and is built on the Open vSwitch (OVS). 
 
@@ -16,7 +16,7 @@ Because we will be integrating NSX with Antrea, we cannot use the open source An
 
 This requires you to have NSX entitlements to download the VMware Antrea Enterprise software via the customer connect portal: <a href="https://customerconnect.vmware.com/downloads/info/slug/networking_security/vmware_antrea/1_x">Vmware Antrea Enterprise 1.x</a>
 
-**Note: *this link will not work if you do not have entitlements.***
+**Note: *this link will not work if you do not have VMware entitlements.  Speak to your VMware Account Team for a demonstration and evaluation license***
 
 You will have several options within the `Product Downloads` tab based on your Linux distribution type.
 
@@ -24,9 +24,9 @@ You will have several options within the `Product Downloads` tab based on your L
 
 Because we have deployed the cluster on Ubuntu 22.04 (Jammy Jellyfish), we will download and use the `VMware Container Networking with Antrea (Advanced) ? Debian Image and Deployment` option (*UBI is for RedHat/CentOS*).  
 
-VMware Container Networking with Antrea is the commercial version of VMware's Antrea open source offering . Antrea is a Kubernetes networking solution intended to be Kubernetes native. It operates at Layer3/4 to provide networking and security services for a Kubernetes cluster.
+VMware Container Networking with Antrea is the commercial version of VMware's Antrea open source offering. Antrea is a Kubernetes networking solution intended to be Kubernetes native. It operates at Layer 3 and 4 to provide networking and security services for a Kubernetes cluster.
 
-The downloaded file name is similar to: `antrea-advanced-1.7.1+vmware.x.zip`. Note that this version will change as this documentation ages.
+The downloaded file name is similar to: `antrea-advanced-1.7.1+vmware.1.zip`. Note that this version will change as this documentation ages.
 
 ### 1.2 Download the Antrea Interworking Adapter Files
 
@@ -115,7 +115,7 @@ You should see similar output:
 
 Navigate to the same directory as the `antrea-advanced-v1.7.1+vmware.1.yml` file and run the following `kubectl` command:
 ```
-kubectl apply -f antrea-advanced-v1.7.1+
+kubectl apply -f antrea-advanced-v1.7.1+vmware.1.yml
 ```
 To verify that Antrea was successfully deployed to the k8s cluster, use the command `kubectl get pods -n kube-system | grep antrea`.  You can even append `-w` to *watch* the status change.  There should be an instance of the Antrea controller along with an instance of Antrea agents (one for each node) with a status of "Running".  See below for example output: 
 
@@ -204,7 +204,14 @@ Configure the following
   <img src=https://bit.ly/nsx-principal-identity>
 </p>
 
-You should now be able to go into NSX's inventory and see your kubernetes cluster objects (pods and services)!
+You should now be able to go into NSX's inventory and see your kubernetes cluster objects (pods and services)
+
+<p align=center>
+  <img src=https://bit.ly/3HFK2pQ>
+  <img src=https://bit.ly/3wTvoGj>
+</p>
+  
+
 
 As you deploy new namespaces and pods, these will now appear in the inventory and you will be able to apply security policies to the container workloads.
 
