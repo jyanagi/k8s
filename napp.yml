@@ -1,0 +1,39 @@
+apiVersion: run.tanzu.vmware.com/v1alpha2
+kind: TanzuKubernetesCluster
+metadata:
+  name: napp-tkc-01
+  namespace: napp
+spec:
+  topology:
+    controlPlane:
+      replicas: 1
+      vmClass: guaranteed-large
+      storageClass: tanzu-gold-storage-policy
+      volumes:
+        - name: etcd
+          mountPath: /var/lib/etcd
+          capacity:
+            storage: 64Gi
+      tkr:
+        reference:
+          name: v1.22.9---vmware.1-tkg.1.cc71bc8
+    nodePools:
+    - name: napp-worker-nodepool
+      replicas: 3
+      vmClass: guaranteed-3xlarge
+      storageClass: tanzu-gold-storage-policy
+      volumes:
+        - name: containerd
+          mountPath: /var/lib/containerd
+          capacity:
+            storage: 64Gi
+      tkr:
+        reference:
+          name: v1.22.9---vmware.1-tkg.1.cc71bc8
+  settings:
+      trust:
+        additionalTrustedCAs:
+          - name: ca-1
+            data: <cert in base64>
+          - name: ca-2
+            data: <cert in base64>
